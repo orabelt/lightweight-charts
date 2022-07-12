@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0">
+	<title>Demo2</title>
+	<script type="text/javascript" src="./dist/lightweight-charts.standalone.development.js"></script>
+</head>
+
+<body style="padding: 0; margin: 0;">
+<div id="caption" style="color: gray; position: relative;"></div>
+<div id="container" style="position: absolute; width: 100%; height: 96%;"></div>
+
+<script>
+	var chart = LightweightCharts.createChart(document.getElementById('container'), {
+		timeScale: {
+			borderColor: "rgb(225, 226, 227)"
+		},
+		overlayPriceScales: {
+			scaleMargins: {
+				top: 0.9,
+				bottom: 0,
+			}
+		},
+		rightPriceScale: {
+			autoScale: true,
+			scaleMargins: {
+				top: 0.01,
+				bottom: 0.1,
+			}
+		}
+	});
+
+	var mainSeries = chart.addLineSeries({
+		title: '', // primary
+		priceFormat: {
+			minMove: 1,
+			precision: 0,
+		},
+		lineWidth: 1,
+	});
+	mainSeries.setData(generateLineData(1000, 300000, 1500));
+
+	var volumeSeries = chart.addHistogramSeries({
+		pane: 0,
+		color: '#26a69a',
+		secondary: 'volume',
+		priceFormat: {
+			type: 'volume',
+		},
+		priceScaleId: '',
+	});
+	volumeSeries.setData(generateHistogramData(10000, 30000));
+
+	var secondSeries = chart.addLineSeries({
+		title: '2', // second
+		priceFormat: {
+			minMove: 1,
+			precision: 0,
+		},
+		color: '#ff0000',
+		lineWidth: 1,
+		pane: 1
+	});
+	secondSeries.setData(generateLineData(0, 100, 20));
+
+	var thirdSeries = chart.addLineSeries({
+		title: '3', // third
+		priceFormat: {
+			minMove: 1,
+			precision: 0,
+		},
+		color: '#00ff00',
+		lineWidth: 1,
+		pane: 1
+	});
+	thirdSeries.setData(generateLineData(0, 100, 20));
+
+	var fourthSeries = chart.addLineSeries({
+		title: '4', // fourth
+		priceFormat: {
+			minMove: 1,
+			precision: 0,
+		},
+		color: '#ea6622',
+		lineWidth: 1,
+		pane: 2
+	});
+	fourthSeries.setData(generateLineData(0, 100, 20));
+
+	// var volumeSeries = chart.addHistogramSeries({
+	// 	secondary: 'volume',
+	// 	priceScaleId: '',
+	// 	pane: 0,
+	// });
+	// volumeSeries.setData(generateHistogramData(10000, 30000));
+
+	var firstRow = document.getElementById('caption');
+	firstRow.innerText = 'Main Chart';
+
+	var _td = chart.getPaneElements()[0];
+	var _main = _td.children[0];
+
+	var legend = document.createElement('div');
+	legend.style.cssText = 'color: blue; width: 100%; height: 100%; position: relative; overflow: hidden; z-index: 1';
+	legend.innerText = 'Main series';
+	_main.appendChild(legend);
+
+	chart.subscribeCrosshairMove((param) => {
+		if (param.time) {
+			const price = param.seriesData.get(mainSeries).value;
+			const volume = param.seriesData.get(volumeSeries).value;
+			legend.innerText = 'ETC USD 1D ' + '\n price: ' + price.toFixed(2) + ' \n volume: ' + volume.toFixed(2);
+
+			const price2 = param.seriesData.get(secondSeries).value;
+			const price3 = param.seriesData.get(thirdSeries).value;
+			const price4 = param.seriesData.get(fourthSeries).value;
+			firstRow.innerText = 'Chart series: ' + 'Second: ' + price2.toFixed(2) + ', Third: ' + price3.toFixed(2) + ', Fourth: ' + price4.toFixed(2);
+		}
+		else {
+			//legend.innerText = 'ETC USD 1D';
+		}
+	});
+
+	//var _table = _td[0].parentElement.parentElement;
+	//var _secong = _table.rows[1].cells; // [3] -> div
+
+	var width = 27;
+	var height = 27;
+	var button = document.createElement('div');
+	//button.className = 'go-to-realtime-button';
+	button.style.cssText = "width: 27px;\n" +
+		"height: 27px;\n" +
+		"position: absolute;\n" +
+		//"display: none;\n" +
+		"padding: 7px;\n" +
+		"box-sizing: border-box;\n" +
+		"font-size: 10px;\n" +
+		"border-radius: 50%;\n" +
+		"text-align: center;\n" +
+		"z-index: 1000;\n" +
+		"color: #B2B5BE;\n" +
+		"background: rgba(250, 250, 250, 0.95);\n" +
+		"box-shadow: 0 2px 5px 0 rgba(117, 134, 150, 0.45);";
+	button.style.left = (10) + 'px';
+	button.style.top = (height + 30) + 'px';
+	button.style.color = '#4c525e';
+	button.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" width="14" height="14"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M6.5 1.5l5 5.5-5 5.5M3 4l2.5 3L3 10"></path></svg>';
+	_td.appendChild(button);
+	button.addEventListener('click', function() {
+		chart.timeScale().scrollToRealTime();
+	});
+	chart.timeScale().subscribeVisibleTimeRangeChange(function() {
+		var buttonVisible = chart.timeScale().scrollPosition() < 0;
+		button.style.display = buttonVisible ? 'block' : 'none';
+		var chartWidth = _td.clientWidth;
+		var chartHeight = _td.clientHeight;
+		button.style.left = (chartWidth - width - 50) + 'px';
+		button.style.top = (chartHeight - height - 30) + 'px';
+	});
+
+
+
+	function generateLineData(minValue, maxValue, maxDailyGainLoss = 1000) {
+		var res = [];
+		var time = new Date(Date.UTC(2018, 0, 1, 0, 0, 0, 0));
+		for (var i = 0; i < 500; ++i) {
+			var previous = res.length > 0 ? res[res.length - 1] : { value: 0 };
+			var newValue = previous.value + ((Math.random() * maxDailyGainLoss * 2) - maxDailyGainLoss);
+
+			res.push({
+				time: time.getTime() / 1000,
+				value: Math.max(minValue, Math.min(maxValue, newValue))
+			});
+
+			time.setUTCDate(time.getUTCDate() + 1);
+		}
+
+		return res;
+	}
+
+	function generateHistogramData(minValue, maxValue) {
+		var res = [];
+		var time = new Date(Date.UTC(2018, 0, 1, 0, 0, 0, 0));
+		for (var i = 0; i < 500; ++i) {
+			res.push({
+				time: time.getTime() / 1000,
+				value: minValue + Math.random() * (maxValue - minValue)
+			});
+
+			time.setUTCDate(time.getUTCDate() + 1);
+		}
+
+		return res;
+	}
+
+</script>
+
+</body>
+
+</html>
