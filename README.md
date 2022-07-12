@@ -24,11 +24,11 @@ The Lightweight Charting Library is the best choice for you if you want to displ
 
 ### Short demo of changes
 
-[Discontinuous line supports](./demo1.html)
+[Discontinuous line supports](https://orabelt.github.io/lightweight-charts/demo1.html)
 
-[Draw a markers at exact price](./demo2.html)
+[Draw a markers at exact price](https://orabelt.github.io/lightweight-charts/demo2.html)
 
-[Multi-pane with legend](./demo3.html)
+[Multi-pane with legend](https://orabelt.github.io/lightweight-charts/demo3.html)
 
 ## Installing
 
