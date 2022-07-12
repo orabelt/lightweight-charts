@@ -101,7 +101,12 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 
 			switch (lineType) {
 				case LineType.Simple:
-					ctx.lineTo(currItem.x, currItem.y);
+					// ctx.lineTo(currItem.x, currItem.y);
+					if (!isNaN(currItem.price) && i > 1 && !isNaN(items[i - 1].price)) {
+						ctx.lineTo(currItem.x, currItem.y);
+					} else {
+						ctx.moveTo(currItem.x, currItem.y);
+					}
 					break;
 				case LineType.WithSteps:
 					ctx.lineTo(currItem.x, items[i - 1].y);

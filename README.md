@@ -22,8 +22,13 @@ TradingView Lightweight Charts are one of the smallest and fastest financial HTM
 
 The Lightweight Charting Library is the best choice for you if you want to display financial data as an interactive chart on your web page without affecting your web page loading speed and performance.
 
-It is the best choice for you if you want to replace static image charts with interactive ones.
-The size of the library is close to static images but if you have dozens of image charts on a web page then using this library can make the size of your web page smaller.
+### Short demo of changes
+
+[Discontinuous line supports](./demo1.html)
+
+[Draw a markers at exact price](./demo2.html)
+
+[Multi-pane with legend](./demo3.html)
 
 ## Installing
 

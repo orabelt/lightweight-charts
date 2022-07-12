@@ -59,6 +59,11 @@ function fillSizeAndY(
 			if (rendererItem.text !== undefined) {
 				rendererItem.text.y = rendererItem.y + halfSize + shapeMargin + textHeight * (0.5 + Constants.TextMargin) as Coordinate;
 			}
+			if (rendererItem.text?.content === '#{formula:priceToCoordinate(id)}' && isNumber(marker.id)) {
+				// const inBarPriceId = isNumber(marker.id) ? marker.id : NaN;
+				rendererItem.y = priceScale.priceToCoordinate(marker.id, firstValue);
+				rendererItem.text.content = '';
+			}
 			return;
 		}
 		case 'aboveBar': {
